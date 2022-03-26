@@ -17,4 +17,6 @@ void kmain(void) {
 
     isr_init();
     irq_init();
+
+    while (1) ;;
 }
