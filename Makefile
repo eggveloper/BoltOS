@@ -8,7 +8,7 @@ linker 	 = linker.ld
 iso    	 = bolt.iso
 lib		 = libbolt.a
 
-OBJECTS := $(patsubst %.asm,%.o,$(wildcard *.asm))
+OBJECTS := $(patsubst %.asm,%.o,$(shell find asm -name '*.asm'))
 SOURCES := $(patsubst %.c,%.o,$(shell find src -name '*.c'))
 
 CFLAGS = -W -Wall -ansi -pedantic -std=c99 -O3 -ffreestanding -nostdlib \
