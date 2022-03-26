@@ -13,7 +13,7 @@ start:
     mov ecx, 0
 
     .map_p2_table:
-        mov ecx, 0x200000
+        mov eax, 0x200000
         mul ecx
         or eax, 0b10000011
         mov [p2_table + ecx * 8], eax
