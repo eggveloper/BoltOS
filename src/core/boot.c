@@ -31,36 +31,36 @@ void dump_multiboot_info(unsigned long addr) {
     ) {
         switch (tag->type) {
             case MULTIBOOT_TAG_TYPE_CMDLINE:
-                DEBUG("Command line = %s\n", ((multiboot_tag_string_t *)tag)->string);
+                DEBUG("command line = %s\n", ((multiboot_tag_string_t*)tag)->string);
 
                 break;
             case MULTIBOOT_TAG_TYPE_BOOT_LOADER_NAME:
-                DEBUG("Boot loader name = %s\n", ((multiboot_tag_string_t *)tag)->string);
+                DEBUG("boot loader name = %s\n", ((multiboot_tag_string_t*)tag)->string);
 
                 break;
             case MULTIBOOT_TAG_TYPE_MODULE:
                 DEBUG(
-                    "Module at 0x%x-0x%x. Command line %s\n",
-                    ((multiboot_tag_module_t *)tag)->mod_start,
-                    ((multiboot_tag_module_t *)tag)->mod_end,
-                    ((multiboot_tag_module_t *)tag)->cmdline
+                    "module at 0x%x-0x%x. command line %s\n",
+                    ((multiboot_tag_module_t*)tag)->mod_start,
+                    ((multiboot_tag_module_t*)tag)->mod_end,
+                    ((multiboot_tag_module_t*)tag)->cmdline
                 );
 
                 break;
             case MULTIBOOT_TAG_TYPE_BASIC_MEMINFO:
                 DEBUG(
                     "mem_lower = %dKB, mem_upper = %dKB\n",
-                    ((multiboot_tag_basic_meminfo_t *)tag)->mem_lower,
-                    ((multiboot_tag_basic_meminfo_t *)tag)->mem_upper
+                    ((multiboot_tag_basic_meminfo_t*)tag)->mem_lower,
+                    ((multiboot_tag_basic_meminfo_t*)tag)->mem_upper
                 );
 
                 break;
             case MULTIBOOT_TAG_TYPE_BOOTDEV:
                 DEBUG(
-                    "Boot device 0x%x, %u, %u\n",
-                    ((multiboot_tag_bootdev_t *)tag)->biosdev,
-                    ((multiboot_tag_bootdev_t *)tag)->slice,
-                    ((multiboot_tag_bootdev_t *)tag)->part
+                    "boot device 0x%x, %u, %u\n",
+                    ((multiboot_tag_bootdev_t*)tag)->biosdev,
+                    ((multiboot_tag_bootdev_t*)tag)->slice,
+                    ((multiboot_tag_bootdev_t*)tag)->part
                 );
 
                 break;
@@ -68,9 +68,9 @@ void dump_multiboot_info(unsigned long addr) {
                 {
                     multiboot_memory_map_t* mmap;
                     for (
-                        mmap = ((multiboot_tag_mmap_t *)tag)->entries;
-                        (uint8_t *) mmap < (uint8_t *)tag + tag->size;
-                        mmap = (multiboot_memory_map_t *)((unsigned long)mmap + ((multiboot_tag_mmap_t*)tag)->entry_size)
+                        mmap = ((multiboot_tag_mmap_t*)tag)->entries;
+                        (uint8_t*) mmap < (uint8_t*)tag + tag->size;
+                        mmap = (multiboot_memory_map_t*)((unsigned long)mmap + ((multiboot_tag_mmap_t*)tag)->entry_size)
                     ) {
                         DEBUG(
                             "mmap base_addr = 0x%x%x, length = 0x%x%x, type = 0x%x\n",
@@ -85,8 +85,40 @@ void dump_multiboot_info(unsigned long addr) {
 
                 break;
 
+            case MULTIBOOT_TAG_TYPE_FRAMEBUFFER:
+                DEBUG("%s\n", "framebuffer");
+
+                break;
+            case MULTIBOOT_TAG_TYPE_APM:
+                DEBUG("%s\n", "apm");
+
+                break;
+            case MULTIBOOT_TAG_TYPE_ACPI_OLD:
+                DEBUG("%s\n", "acpi old");
+
+                break;
+            case MULTIBOOT_TAG_TYPE_ACPI_NEW:
+                DEBUG("%s\n", "acpi new");
+
+                break;
+            case MULTIBOOT_TAG_TYPE_ELF_SECTIONS:
+                DEBUG("%s\n", "elf sections");
+
+                break;
+            case MULTIBOOT_TAG_TYPE_NETWORK:
+                DEBUG("%s\n", "network");
+
+                break;
+            case MULTIBOOT_TAG_TYPE_LOAD_BASE_ADDR:
+                DEBUG("%s\n", "load base addr");
+
+                break;
             default:
-                DEBUG("Tag 0x%x, Size 0x%x\n", tag->type, tag->size);
+                DEBUG("tag 0x%x, Size 0x%x\n", tag->type, tag->size);
         }
     }
+
+    tag = (multiboot_tag_t*)((uint8_t*)tag + ((tag->size + 7) & ~7));
+
+    DEBUG("Total MBI size 0x%x\n", (unsigned long)tag - addr);
 }
