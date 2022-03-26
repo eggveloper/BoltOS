@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdint.h>
+#include <stdlib.h>
 #include <string.h>
 #include <stdarg.h>
 #include <drivers/screen.h>
@@ -8,12 +9,13 @@ char* convert(unsigned int num, int base);
 void putchar(char c);
 void puts(char* s);
 
-void printf(const char* format, ...)
-{
+void printf(const char* format, ...) {
     va_list arg;
     va_start(arg, format);
 
     int i_val;
+    char s_val[20];
+
     for (int i = 0; i < strlen(format); i++) {
         char c = format[i];
 
@@ -33,14 +35,15 @@ void printf(const char* format, ...)
                         putchar('-');
                     }
 
-                    puts(convert(i_val, 10));
+                    itoa(i_val, s_val);
+                    puts(s_val);
 
                     break;
 
                 case 'x':
                     i_val = va_arg(arg, unsigned int);
 
-                    puts(convert(i, 16));
+                    puts(convert(i_val, 16));
 
                     break;
 

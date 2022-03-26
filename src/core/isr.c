@@ -1,5 +1,5 @@
 #include <core/ports.h>
-#include <drivers/screen.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include "isr.h"
 
@@ -111,15 +111,7 @@ void irq_init() {
 }
 
 void isr_handler(uint64_t id, uint64_t stack) {
-    char s[3];
-
-    itoa(id, s);
-
-    screen_print("Interrupt: ");
-    screen_print(exception_messages[id]);
-    screen_print(" (");
-    screen_print(s);
-    screen_print(")\n");
+    printf("Interrupt: %s (%d)\n", exception_messages[id], id);
 
     UNUSED(stack);
 
