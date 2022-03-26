@@ -4,9 +4,9 @@ AR   ?= ar
 NASM ?= nasm
 
 ifeq ($(shell uname -s),Linux)
-	CC = ./toolchain/x86_64/x86_64-elf-gcc
-	LD = ./toolchain/x86_64/x86_64-elf-ld
-	AR = ./toolchain/x86_64/x86_64-elf-ar
+	CC = ./toolchain/x86_64/bin/x86_64-elf-gcc
+	LD = ./toolchain/x86_64/bin/x86_64-elf-ld
+	AR = ./toolchain/x86_64/bin/x86_64-elf-ar
 endif
 
 kernel 	 = isofiles/boot/kernel.bin
@@ -19,7 +19,7 @@ SOURCES := $(patsubst %.c,%.o,$(shell find src -name '*.c'))
 
 CFLAGS = -W -Wall -ansi -pedantic -std=c99 -O3 -ffreestanding -nostdlib \
 		 -nostdinc -fno-builtin -fno-stack-protector -nostartfiles -nodefaultlibs \
-		 -Isrc/include/ -Isrc/
+		 -mno-red-zone -Isrc/include/ -Isrc/
 
 default: iso
 kernel: $(kernel)
