@@ -1,4 +1,4 @@
-extern kmain
+extern long_mode_start
 global start
 
 section .text
@@ -54,7 +54,7 @@ start:
     mov es, ax
 
     ; Jump to long mode
-    call kmain
+    jmp gdt64.code:long_mode_start
 
     ; Should not be reached
     hlt

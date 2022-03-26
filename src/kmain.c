@@ -3,12 +3,14 @@
 #include "kmain.h"
 
 void kmain(void) {
-    uint16_t* vga = (uint16_t*)0xB8000;
-    uint8_t scheme = new_scheme(COLOR_WHITE, COLOR_BLACK);
+    screen_init();
+    screen_clear();
 
-    vga[0] = vga_print('H', scheme);
-    vga[1] = vga_print('e', scheme);
-    vga[2] = vga_print('l', scheme);
-    vga[3] = vga_print('l', scheme);
-    vga[4] = vga_print('o', scheme);
+    screen_print(KERNEL_NAME);
+    screen_print(" ");
+    screen_print(KERNEL_VERSION);
+    screen_print(" / Built on: ");
+    screen_print(KERNEL_DATE);
+    screen_print(" at ");
+    screen_print(KERNEL_TIME);
 }
