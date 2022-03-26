@@ -9,7 +9,7 @@ start:
     ; ebx points to a boot information structure
     ; We move it to esi to pass it to our kernel
     mov esi, ebx
-    
+
     ; eax should contain multiboot2 magic number
     mov edi, eax
 
@@ -61,7 +61,7 @@ check_cpuid:
     ; Restore FLAGS from old version stored in ecx (i.e. flipping the
     ; ID bit back if it was never flipped)
     push ecx
-    pushfd
+    popfd
 
     ; Compare eax and ecx. If they are equal then that means the bit
     ; wasn't flipped, and CPUID isn't supported
