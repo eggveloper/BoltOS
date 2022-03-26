@@ -50,9 +50,14 @@ $(iso): $(kernel)
 	grub-mkrescue -o $@ isofiles
 
 run: $(iso)
-	qemu-system-x86_64 -cdrom bolt.iso
+	qemu-system-x86_64 -cdrom $<
 
 .PHONY: run
+
+debug: $(iso)
+	qemu-system-x86_64 -cdrom $< -serial file:/tmp/serial.log
+
+.PHONY: debug
 
 toolchain:
 	@-mkdir toolchain/x86_64
