@@ -55,7 +55,7 @@ run: $(iso)
 .PHONY: run
 
 debug: $(iso)
-	qemu-system-x86_64 -cdrom $< -serial file:/tmp/serial.log
+	qemu-system-x86_64 -cdrom $< -chardev stdio,id=char0,logfile=/tmp/serial.log,signal=off -serial chardev:char0
 
 .PHONY: debug
 

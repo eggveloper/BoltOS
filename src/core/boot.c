@@ -35,15 +35,15 @@ void dump_multiboot_info(unsigned long addr) {
 
                 break;
             case MULTIBOOT_TAG_TYPE_BOOT_LOADER_NAME:
-                DEBUG("Boot loader name = %s\n", ((multiboot_tag_string_t *) tag)->string);
+                DEBUG("Boot loader name = %s\n", ((multiboot_tag_string_t *)tag)->string);
 
                 break;
             case MULTIBOOT_TAG_TYPE_MODULE:
                 DEBUG(
                     "Module at 0x%x-0x%x. Command line %s\n",
-                    ((multiboot_tag_module_t *) tag)->mod_start,
-                    ((multiboot_tag_module_t *) tag)->mod_end,
-                    ((multiboot_tag_module_t *) tag)->cmdline
+                    ((multiboot_tag_module_t *)tag)->mod_start,
+                    ((multiboot_tag_module_t *)tag)->mod_end,
+                    ((multiboot_tag_module_t *)tag)->cmdline
                 );
 
                 break;
@@ -57,11 +57,31 @@ void dump_multiboot_info(unsigned long addr) {
                 break;
             case MULTIBOOT_TAG_TYPE_BOOTDEV:
                 DEBUG(
-                    "Boot device 0x%x,%u,%u\n",
-                    ((multiboot_tag_bootdev_t *) tag)->biosdev,
-                    ((multiboot_tag_bootdev_t *) tag)->slice,
-                    ((multiboot_tag_bootdev_t *) tag)->part
+                    "Boot device 0x%x, %u, %u\n",
+                    ((multiboot_tag_bootdev_t *)tag)->biosdev,
+                    ((multiboot_tag_bootdev_t *)tag)->slice,
+                    ((multiboot_tag_bootdev_t *)tag)->part
                 );
+
+                break;
+            case MULTIBOOT_TAG_TYPE_MMAP:
+                {
+                    multiboot_memory_map_t* mmap;
+                    for (
+                        mmap = ((multiboot_tag_mmap_t *)tag)->entries;
+                        (uint8_t *) mmap < (uint8_t *)tag + tag->size;
+                        mmap = (multiboot_memory_map_t *)((unsigned long)mmap + ((multiboot_tag_mmap_t*)tag)->entry_size)
+                    ) {
+                        DEBUG(
+                            "mmap base_addr = 0x%x%x, length = 0x%x%x, type = 0x%x\n",
+                            (unsigned)(mmap->addr >> 32),
+                            (unsigned)(mmap->addr & 0xffffffff),
+                            (unsigned)(mmap->len >> 32),
+                            (unsigned)(mmap->len & 0xffffffff),
+                            (unsigned)mmap->type
+                        );
+                    }
+                }
 
                 break;
 
