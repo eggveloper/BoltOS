@@ -17,10 +17,19 @@ jobs:
         sudo apt-get update
         sudo apt-get install -y nasm grub2 xorriso build-essential make
 
+    - name: Toolchain
+      run: make toolchain
+
+    - name: Cache toolchain
+      uses: actions/cache@v3.0.0
+      with:
+        path: toolchain/x86_64
+        key: ${{ runner.os }}-toolchain_x86_64
+
     - name: Build
       run: make
 
-    - name: Upload a Build Artifact
+    - name: Upload bolt.iso
       uses: actions/upload-artifact@v3.0.0
       with:
         name: bolt.iso
