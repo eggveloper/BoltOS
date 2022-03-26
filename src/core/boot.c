@@ -160,3 +160,4 @@ void dump_multiboot_info(unsigned long addr) {
 
     DEBUG("kernel start = 0x%x, kernel end = 0x%x\n", (kernel_start >> 32), (kernel_end >> 32));
     DEBUG("multiboot start = 0x%x, multiboot end = 0x%x\n", addr, tag);
+}
