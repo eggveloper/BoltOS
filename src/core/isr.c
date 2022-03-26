@@ -1,6 +1,7 @@
 #include <core/ports.h>
 #include <core/timer.h>
 #include <drivers/screen.h>
+#include <stdlib.h>
 #include "isr.h"
 
 isr_t interrupt_handlers[256];
@@ -120,6 +121,8 @@ void isr_handler(uint64_t id, uint64_t stack) {
     screen_print(" (");
     screen_print(s);
     screen_print(")\n");
+
+    UNUSED(stack);
 }
 
 void irq_handler(uint64_t id, uint64_t stack) {

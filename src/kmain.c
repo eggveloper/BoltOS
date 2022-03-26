@@ -15,8 +15,13 @@ void kmain(void) {
     screen_print(KERNEL_TIME);
     screen_print("\n\n");
 
+    screen_print(KERNEL_ASCII);
+    screen_print("\n");
+
     isr_init();
     irq_init();
 
-    while (1) ;;
+    while (1) {
+        __asm__("hlt");
+    }
 }
