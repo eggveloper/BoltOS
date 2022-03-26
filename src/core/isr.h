@@ -47,6 +47,6 @@ typedef struct registers {
 } registers_t;
 
 void isr_init();
-void isr_handler(registers_t r) __asm__("isr_handler");
+void isr_handler(uint64_t id, uint64_t stack) __asm__("isr_handler");
 
 #endif
