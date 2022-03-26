@@ -10,6 +10,14 @@ extern irq_handler
         jmp isr_common_stub
 %endmacro
 
+%macro irq_handler 1
+    global irq%1
+    irq%1:
+        cli
+        mov rdi, dword (32 + %1)
+        jmp irq_common_stub
+%endmacro
+
 isr_common_stub:
     ; Save registers
     push rax
@@ -128,22 +136,9 @@ irq_common_stub:
     sti
     iretq
 
-global irq0
-global irq1
-global irq2
+; Define hardware interrupts
+; ! Should be kept in sync with src/core/isr.h
 
-irq0:
-    cli
-    mov rdi, dword 32
-    jmp irq_common_stub
-
-irq1:
-    cli
-    mov rdi, dword 33
-    jmp irq_common_stub
-
-irq2:
-    cli
-    mov rdi, dword 34
-    jmp irq_common_stub
-
+irq_handler 0
+irq_handler 1
+irq_handler 2
