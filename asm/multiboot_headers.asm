@@ -1,8 +1,11 @@
 section .multiboot_header
 
+%define MULTIBOOT_HEADER_MAGIC 0xe85250d6
+%define MULTIBOOT_HEADER_FLAGS 0
+
 header_start:
-    dd 0xe85250d6                           ; magic
-    dd 0                                    ; protected mode code
+    dd MULTIBOOT_HEADER_MAGIC               ; magic
+    dd MULTIBOOT_HEADER_FLAGS               ; protected mode code
     dd header_end - header_start            ; header length
 
     ; checksum
