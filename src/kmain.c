@@ -16,6 +16,5 @@ void kmain(void) {
     screen_print("\n\n");
 
     isr_init();
-
-    screen_print("Initialized ISR.");
+    irq_init();
 }

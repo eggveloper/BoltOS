@@ -1,4 +1,5 @@
 #include <core/ports.h>
+#include <core/timer.h>
 #include <drivers/screen.h>
 #include "isr.h"
 
@@ -43,6 +44,26 @@ const char* exception_messages[] = {
 };
 
 void isr_init() {
+    // Start initialization
+    port_byte_out(PIC1, 0x11);
+    port_byte_out(PIC2, 0x11);
+
+    // Set IRQ base numbers for each PIC
+    port_byte_out(PIC1_DATA, IRQ_BASE);
+    port_byte_out(PIC2_DATA, IRQ_BASE + 8);
+
+    // Use IRQ number 2 to relay IRQs from the slave PIC
+    port_byte_out(PIC1_DATA, 0x04);
+    port_byte_out(PIC2_DATA, 0x02);
+
+    // Finish initialization
+    port_byte_out(PIC1_DATA, 0x01);
+    port_byte_out(PIC2_DATA, 0x01);
+
+    // Mask all IRQs
+    port_byte_out(PIC1_DATA, 0x00);
+    port_byte_out(PIC2_DATA, 0x00);
+
     set_idt_gate(0, (uint64_t)isr0);
     set_idt_gate(1, (uint64_t)isr1);
     set_idt_gate(2, (uint64_t)isr2);
@@ -76,24 +97,17 @@ void isr_init() {
     set_idt_gate(30, (uint64_t)isr30);
     set_idt_gate(31, (uint64_t)isr31);
 
-    // Remap PIC
-
-    port_byte_out(0x20, 0x11);
-    port_byte_out(0xA0, 0x11);
-    port_byte_out(0x21, 0x20);
-    port_byte_out(0xA1, 0x28);
-    port_byte_out(0x21, 0x04);
-    port_byte_out(0xA1, 0x02);
-    port_byte_out(0x21, 0x01);
-    port_byte_out(0xA1, 0x01);
-    port_byte_out(0x21, 0x0);
-    port_byte_out(0xA1, 0x0);
-
     set_idt_gate(IRQ0, (uint64_t)irq0);
     set_idt_gate(IRQ1, (uint64_t)irq1);
     set_idt_gate(IRQ2, (uint64_t)irq2);
 
     set_idt();
+}
+
+void irq_init() {
+    __asm__("sti");
+
+    init_timer(50);
 }
 
 void isr_handler(uint64_t id, uint64_t stack) {
@@ -109,19 +123,19 @@ void isr_handler(uint64_t id, uint64_t stack) {
 }
 
 void irq_handler(uint64_t id, uint64_t stack) {
-    if (id > 34) {
-        port_byte_out(0xA0, 0x20);
+    if (id >= 40) {
+        port_byte_out(PIC2, PIC_EOI);
     }
 
-    port_byte_out(0x20, 0x20);
+    port_byte_out(PIC1, PIC_EOI);
 
-    isr_t handler = interrupt_handlers[id];
+    if (interrupt_handlers[id] != 0) {
+        isr_t handler = interrupt_handlers[id];
 
-    if (handler != 0) {
         handler(stack);
     }
 }
 
 void register_interrupt_handler(uint64_t id, isr_t handler) {
-
+    interrupt_handlers[id] = handler;
 }
