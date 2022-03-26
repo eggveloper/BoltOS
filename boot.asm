@@ -1,4 +1,6 @@
+extern kmain
 global start
+
 section .text
 bits 32
 start:
@@ -52,7 +54,10 @@ start:
     mov es, ax
 
     ; Jump to long mode
-    jmp gdt64.code:long_mode_start
+    call kmain
+
+    ; Should not be reached
+    hlt
 
 section .bss
 align 4096
@@ -80,12 +85,3 @@ gdt64:
 .pointer:
     dw .pointer - gdt64 - 1
     dq gdt64
-
-section .text
-bits 64
-
-long_mode_start:
-    mov rax, 0x2f592f412f4b2f4f
-    mov qword [0xb8000], rax
-
-    hlt
