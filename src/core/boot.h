@@ -33,6 +33,9 @@
 #define MULTIBOOT_TAG_TYPE_EFI64_IH          20
 #define MULTIBOOT_TAG_TYPE_LOAD_BASE_ADDR    21
 
+#define MULTIBOOT_MEMORY_AVAILABLE  1
+#define MULTIBOOT_MEMORY_RESERVED   2
+
 typedef struct multiboot_header
 {
     uint32_t magic;
@@ -104,6 +107,15 @@ typedef struct multiboot_tag_network {
     uint32_t size;
     uint8_t dhcpack[];
 } multiboot_tag_network_t;
+
+typedef struct multiboot_tag_elf_sections {
+    uint32_t type;
+    uint32_t size;
+    uint32_t num;
+    uint32_t entsize;
+    uint32_t shndx;
+    char sections[];
+} multiboot_tag_elf_sections_t;
 
 int multiboot_is_valid(unsigned long magic, unsigned long addr);
 void dump_multiboot_info(unsigned long addr);

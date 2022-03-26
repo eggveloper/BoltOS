@@ -102,7 +102,10 @@ void dump_multiboot_info(unsigned long addr) {
 
                 break;
             case MULTIBOOT_TAG_TYPE_ELF_SECTIONS:
-                DEBUG("%s\n", "elf sections");
+                DEBUG(
+                    "elf sections number = %d\n",
+                    ((multiboot_tag_elf_sections_t*)tag)->num
+                );
 
                 break;
             case MULTIBOOT_TAG_TYPE_NETWORK:
