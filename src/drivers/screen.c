@@ -8,8 +8,7 @@
 #define FB_HIGH_BYTE_COMMAND    14
 #define FB_LOW_BYTE_COMMAND     15
 
-void print_char_at(char c, uint8_t scheme, int x, int y);
-void print_char(char c);
+void screen_write_at(char c, uint8_t scheme, int x, int y);
 int strlen(const char* str);
 uint8_t color_scheme(uint8_t fg, uint8_t bg);
 void move_cursor(uint16_t pos);
@@ -29,14 +28,14 @@ void screen_init() {
 void screen_clear() {
     for (int y = 0; y < VGA_HEIGHT; y++) {
         for (int x = 0; x < VGA_WIDTH; x++) {
-            print_char_at(' ', screen_scheme, x, y);
+            screen_write_at(' ', screen_scheme, x, y);
         }
     }
 }
 
 void screen_print(const char* str) {
     for (int i = 0; i < strlen(str); i++) {
-        print_char(str[i]);
+        screen_write(str[i]);
     }
 }
 
@@ -44,7 +43,7 @@ uint8_t color_scheme(uint8_t fg, uint8_t bg) {
     return fg | bg << 4;
 }
 
-void print_char_at(char c, uint8_t scheme, int x, int y) {
+void screen_write_at(char c, uint8_t scheme, int x, int y) {
     const int offset = 2 * (y * VGA_WIDTH + x);
 
     framebuffer[offset] = c;
@@ -70,19 +69,19 @@ void print_char_at(char c, uint8_t scheme, int x, int y) {
     }
 }
 
-void print_char(char c) {
+void screen_write(char c) {
     if (c == '\n') {
         screen_col = 0;
         screen_row++;
     } else if (c == '\b' && screen_col > 0) {
         --screen_col;
-        print_char_at(0x0, screen_scheme, screen_col, screen_row);
+        screen_write_at(0x0, screen_scheme, screen_col, screen_row);
     } else if (c == '\t') {
         screen_col = screen_col + 8 - (screen_col % 8);
     } else if (c == '\r') {
         screen_col = 0;
     } else {
-        print_char_at(c, screen_scheme, screen_col, screen_row);
+        screen_write_at(c, screen_scheme, screen_col, screen_row);
 
         screen_col++;
 
