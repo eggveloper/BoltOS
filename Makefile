@@ -9,11 +9,11 @@ iso    	 = bolt.iso
 lib		 = libbolt.a
 
 OBJECTS := $(patsubst %.asm,%.o,$(wildcard *.asm))
-SOURCES := $(patsubst %.c,%.o,$(wildcard src/*.c))
+SOURCES := $(patsubst %.c,%.o,$(shell find src -name '*.c'))
 
-CFLAGS = -W -Wall -ansi -pedantic -std=c99 -O2 -ffreestanding -nostdlib \
+CFLAGS = -W -Wall -ansi -pedantic -std=c99 -O3 -ffreestanding -nostdlib \
 		 -nostdinc -fno-builtin -fno-stack-protector -nostartfiles -nodefaultlibs \
-		 -Isrc/include/
+		 -Isrc/include/ -Isrc/
 
 default: iso
 kernel: $(kernel)
@@ -21,16 +21,20 @@ kernel: $(kernel)
 .PHONY: kernel
 
 $(kernel): $(OBJECTS) $(lib)
-	$(LD) --nmagic --output=$@ --script=$(linker) $(OBJECTS) $(lib)
+	@$(LD) --nmagic --output=$@ --script=$(linker) $(OBJECTS) $(lib)
+	@echo "[LD] $@"
 
 $(OBJECTS): %.o: %.asm
-	$(NASM) -f elf64 $<
+	@$(NASM) -f elf64 $<
+	@echo "[AS] $<"
 
-$(SOURCES): %.o: %.c $(HEADERS)
-	$(CC) $(CFLAGS) -c $< -o $@
+$(SOURCES): %.o: %.c
+	@$(CC) $(CFLAGS) -c $< -o $@
+	@echo "[CC] $<"
 
 $(lib): $(SOURCES)
-	$(AR) rcs $@ $^
+	@$(AR) rcs $@ $^
+	@echo "[AR] $@"
 
 iso: $(iso)
 
