@@ -4,6 +4,28 @@ global start
 section .text
 bits 32
 start:
+    mov esp, stack_top
+    mov edi, ebx
+
+    call set_up_page_tables
+    call enable_paging
+
+    lgdt [gdt64.pointer]
+
+    ; Update selectors
+    mov ax, gdt64.data
+    mov ss, ax
+    mov ds, ax
+    mov es, ax
+    mov fs, ax
+    mov gs, ax
+
+    jmp gdt64.code:long_mode_start
+
+    ; Should not be reached
+    hlt
+
+set_up_page_tables:
     mov eax, p3_table
     or eax, 0b11
     mov dword [p4_table + 0], eax
@@ -24,6 +46,9 @@ start:
     cmp ecx, 512
     jne .map_p2_table
 
+    ret
+
+enable_paging:
     ; Move page table address to cr3
     mov eax, p4_table
     mov cr3, eax
@@ -45,19 +70,7 @@ start:
     or eax, 1 << 16
     mov cr0, eax
 
-    lgdt [gdt64.pointer]
-
-    ; Update selectors
-    mov ax, gdt64.data
-    mov ss, ax
-    mov ds, ax
-    mov es, ax
-
-    ; Jump to long mode
-    jmp gdt64.code:long_mode_start
-
-    ; Should not be reached
-    hlt
+    ret
 
 section .bss
 align 4096
@@ -70,6 +83,10 @@ p3_table:
 
 p2_table:
     resb 4096
+
+stack_bottom:
+    resb 4096 * 4
+stack_top:
 
 section .rodata
 
