@@ -1,7 +1,13 @@
-CC   = ./toolchain/x86_64/bin/x86_64-elf-gcc
-LD   = ./toolchain/x86_64/bin/x86_64-elf-ld
-AR   = ./toolchain/x86_64/bin/x86_64-elf-ar
-NASM = nasm
+CC   ?= gcc
+LD   ?= ld
+AR   ?= ar
+NASM ?= nasm
+
+ifeq ($(shell uname -s),Linux)
+	CC = ./toolchain/x86_64/x86_64-elf-gcc
+	LD = ./toolchain/x86_64/x86_64-elf-ld
+	AR = ./toolchain/x86_64/x86_64-elf-ar
+endif
 
 kernel 	 = isofiles/boot/kernel.bin
 linker 	 = linker.ld
