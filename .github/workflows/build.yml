@@ -1,0 +1,28 @@
+name: BoltOS Ubuntu Build
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Install packages
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y nasm grub2 xorriso build-essential make
+
+    - name: Build
+      run: make
+
+    - name: Upload a Build Artifact
+      uses: actions/upload-artifact@v3.0.0
+      with:
+        name: bolt.iso
+        path: bolt.iso
+        retention-days: 90
