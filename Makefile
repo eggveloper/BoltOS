@@ -23,8 +23,7 @@ OBJECTS := $(patsubst %.asm,%.o,$(shell find asm -name '*.asm'))
 SOURCES := $(patsubst %.c,%.o,$(shell find src -name '*.c'))
 
 CFLAGS = -W -Wall -pedantic -std=c11 -O2 -ffreestanding -nostdlib \
-		 -nostdinc -fno-builtin -fno-stack-protector -nostartfiles -nodefaultlibs \
-		 -mno-red-zone -Isrc/include/ -Isrc/
+		 -mno-red-zone -Isrc/include/ -Isrc/ -fno-builtin -fno-stack-protector \
 
 default: iso
 kernel: $(KERNEL)
