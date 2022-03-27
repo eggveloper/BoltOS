@@ -8,8 +8,8 @@ uint64_t multiboot_start;
 uint64_t multiboot_end;
 
 int multiboot_is_valid(unsigned long magic, unsigned long addr) {
-    if (magic != MULTIBOOT2_BOOTLOADER_MAGIC) {
-        printf("[ERROR]: Invalid magic number: 0x%x", magic);
+    if (magic != MULTIBOOT2_MAGIC_NUMBER) {
+        printf("[ERROR]: Invalid magic value: 0x%x", magic);
 
         return -1;
     }
