@@ -1,9 +1,8 @@
 Bolt
 ====
 
-Bolt is a simple 64bit kernel.
-
 <p align="center">
+    <strong>Bolt is a simple 64bit kernel.</strong>
     <img src="doc/BoltOS.png" /><br>
     <em>Image showcasing Bolt running in QEMU.</em><br>
     <em>(The media above may not be up to date)</em>
