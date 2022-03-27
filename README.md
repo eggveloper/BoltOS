@@ -67,4 +67,4 @@ To compile the OS in normal mode, and run it in qemu, run:
 
 ## License
 
-Bolt is released under the MIT License. See the bundled [LICENSE](LICENSE.md) file for details.
+Bolt is released under the MIT License. See the bundled [LICENSE](LICENSE) file for details.
