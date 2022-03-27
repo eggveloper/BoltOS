@@ -1,20 +1,20 @@
+#include "kmain.h"
 #include <core/isr.h>
 #include <core/timer.h>
 #include <core/debug.h>
-#include <mmu/mmap.h>
-#include <mmu/paging.h>
+#include <mmu/mmu.h>
+#include <kernel/panic.h>
 #include <drivers/screen.h>
 #include <drivers/serial.h>
 #include <drivers/keyboard.h>
 #include <stdio.h>
-#include "kmain.h"
 
 void kmain(unsigned long magic, unsigned long addr) {
     screen_init();
     screen_clear();
 
     if (multiboot_is_valid(magic, addr) != 0) {
-        printf("\nsystem halted");
+        PANIC("invalid multiboot");
 
         return;
     }
