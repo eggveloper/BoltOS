@@ -120,3 +120,11 @@ frame_t frame_containing_address(uint64_t addr) {
 uint64_t frame_starting_address(frame_t frame) {
     return frame * PAGE_SIZE;
 }
+
+void mmap_deallocate_frame(frame_t frame) {
+    uint64_t addr = frame_starting_address(frame);
+
+    for (int i = 0; i < PAGE_SIZE; i++) {
+        ((uint64_t*)addr)[i] = 0;
+    }
+}

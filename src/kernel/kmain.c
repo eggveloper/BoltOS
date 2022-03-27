@@ -45,16 +45,8 @@ void kmain(unsigned long magic, unsigned long addr) {
     // Memory
     multiboot_tag_mmap_t* mmap = find_multiboot_tag(addr, MULTIBOOT_TAG_TYPE_MMAP);
 
-    mmap_init(mmap, k_start, k_end, addr, (addr + *(unsigned *)addr));
+    mmap_init(mmap, k_start, k_end, addr, (addr + *(unsigned*)addr));
     paging_init();
-
-    physical_address_t a = 42 * 512 * 512 * 4096;
-    page_t page = page_containing_address(a);
-    frame_t frame = translate_page(page);
-
-    DEBUG("translate_page = 0x%X", frame);
-    map_page_to_frame(page, frame, 0x0);
-    map_page_to_frame(page, translate_page(page), 0U);
 
     while (1) {
         __asm__("hlt");
