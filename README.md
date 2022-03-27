@@ -4,8 +4,8 @@ Bolt
 Bolt is a simple 64bit kernel.
 
 <p align="center">
-    <img src="doc/BoltOS.png">
-    <em><small>Image showcasing Bolt running in QEMU.</small></em>
+    <img src="doc/BoltOS.png" /><br>
+    <em>Image showcasing Bolt running in QEMU.</em>
 </p>
 
 ## Setting up a development environment
