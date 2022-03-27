@@ -116,3 +116,7 @@ frame_t mmap_allocate_frame() {
 frame_t frame_containing_address(uint64_t addr) {
     return addr / PAGE_SIZE;
 }
+
+uint64_t frame_starting_address(frame_t frame) {
+    return frame * PAGE_SIZE;
+}

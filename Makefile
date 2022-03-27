@@ -17,7 +17,7 @@ lib		 = libbolt.a
 OBJECTS := $(patsubst %.asm,%.o,$(shell find asm -name '*.asm'))
 SOURCES := $(patsubst %.c,%.o,$(shell find src -name '*.c'))
 
-CFLAGS = -W -Wall -pedantic -std=c99 -O2 -ffreestanding -nostdlib \
+CFLAGS = -W -Wall -pedantic -std=c11 -O2 -ffreestanding -nostdlib \
 		 -nostdinc -fno-builtin -fno-stack-protector -nostartfiles -nodefaultlibs \
 		 -mno-red-zone -Isrc/include/ -Isrc/
 
@@ -54,6 +54,7 @@ run: $(iso)
 
 .PHONY: run
 
+debug: CFLAGS += -DENABLE_KERNEL_DEBUG
 debug: $(iso)
 	qemu-system-x86_64 -cdrom $< -chardev stdio,id=char0,logfile=/tmp/serial.log,signal=off -serial chardev:char0
 
