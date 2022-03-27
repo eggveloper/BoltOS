@@ -10,8 +10,16 @@
                         "                  +#+    +#+ +#+    +#+ +#+        +#+        \n" \
                         "                 #+#    #+# #+#    #+# #+#        #+#         \n" \
                         "                #########   ########  ########## ###          \n"
+
+
 #define KERNEL_NAME    "Bolt"
+
+#ifdef ENABLE_KERNEL_DEBUG
+#define KERNEL_VERSION "DEBUG MODE"
+#else
 #define KERNEL_VERSION "0.0.1d"
+#endif
+
 #define KERNEL_DATE     __DATE__
 #define KERNEL_TIME     __TIME__
 

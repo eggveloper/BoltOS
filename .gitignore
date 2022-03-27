@@ -1,6 +1,6 @@
 *.o
 *.bin
-*.iso
+/build/
 *.a
-toolchain/
-.vscode/settings.json
+/toolchain/
+/.vscode/settings.json

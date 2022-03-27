@@ -9,10 +9,15 @@ ifeq ($(shell uname -s),Linux)
 	AR = ./toolchain/x86_64/bin/x86_64-elf-ar
 endif
 
-kernel 	 = isofiles/boot/kernel.bin
-linker 	 = linker.ld
-iso    	 = bolt.iso
-lib		 = libbolt.a
+OS_NAME    = bolt
+BUILD_DIR  = build
+LINKER     = linker.ld
+ISO_DIR    = $(BUILD_DIR)/isofiles
+KERNEL_DIR = $(ISO_DIR)/boot
+GRUB_DIR   = $(KERNEL_DIR)/grub
+KERNEL     = $(KERNEL_DIR)/kernel.bin
+ISO        = $(BUILD_DIR)/$(OS_NAME).iso
+LIB        = $(BUILD_DIR)/lib$(OS_NAME).a
 
 OBJECTS := $(patsubst %.asm,%.o,$(shell find asm -name '*.asm'))
 SOURCES := $(patsubst %.c,%.o,$(shell find src -name '*.c'))
@@ -22,15 +27,17 @@ CFLAGS = -W -Wall -pedantic -std=c11 -O2 -ffreestanding -nostdlib \
 		 -mno-red-zone -Isrc/include/ -Isrc/
 
 default: iso
-kernel: $(kernel)
+kernel: $(KERNEL)
 
 .PHONY: kernel
 
-$(kernel): $(OBJECTS) $(lib)
-	@$(LD) --nmagic --output=$@ --script=$(linker) $(OBJECTS) $(lib)
+$(KERNEL): $(OBJECTS) $(LIB)
+	mkdir -p $(KERNEL_DIR)
+	$(LD) --nmagic --output=$@ --script=$(LINKER) $(OBJECTS) $(LIB)
 	@echo "[LD] $@"
 
 $(OBJECTS): %.o: %.asm
+	@mkdir -p $(BUILD_DIR)
 	@$(NASM) -f elf64 $<
 	@echo "[AS] $<"
 
@@ -38,24 +45,26 @@ $(SOURCES): %.o: %.c
 	@$(CC) $(CFLAGS) -c $< -o $@
 	@echo "[CC] $<"
 
-$(lib): $(SOURCES)
+$(LIB): $(SOURCES)
 	@$(AR) rcs $@ $^
 	@echo "[AR] $@"
 
-iso: $(iso)
+iso: $(ISO)
 
 .PHONY: iso
 
-$(iso): $(kernel)
-	grub-mkrescue -o $@ isofiles
+$(ISO): $(KERNEL)
+	@mkdir -p $(GRUB_DIR)
+	@cp -R grub/* $(GRUB_DIR)
+	grub-mkrescue -o $@ $(ISO_DIR)
 
-run: $(iso)
+run: $(ISO)
 	qemu-system-x86_64 -cdrom $<
 
 .PHONY: run
 
 debug: CFLAGS += -DENABLE_KERNEL_DEBUG
-debug: $(iso)
+debug: $(ISO)
 	qemu-system-x86_64 -cdrom $< -chardev stdio,id=char0,logfile=/tmp/serial.log,signal=off -serial chardev:char0
 
 .PHONY: debug
@@ -75,6 +84,7 @@ clean_toolchain:
 .PHONY: clean_toolchain
 
 clean:
-	rm -f $(OBJECTS) $(SOURCES) $(kernel) $(iso) $(lib)
+	rm -f $(OBJECTS) $(SOURCES) $(KERNEL) $(ISO) $(LIB)
+	rm -rf $(BUILD_DIR)
 
 .PHONY: clean

@@ -14,13 +14,19 @@ void kmain(unsigned long magic, unsigned long addr) {
     screen_clear();
 
     if (multiboot_is_valid(magic, addr) != 0) {
-        printf("system halted");
+        printf("\nsystem halted");
 
         return;
     }
 
+    multiboot_info_t* mbi = (multiboot_info_t*)addr;
+    reserved_areas_t reserved = read_multiboot_info(mbi);
+
     printf("%s\n", KERNEL_ASCII);
     printf("%s %s / Built on: %s at %s\n\n", KERNEL_NAME, KERNEL_VERSION, KERNEL_DATE, KERNEL_TIME);
+
+    printf("multiboot_start = 0x%X, multiboot_end = 0x%X\n", reserved.multiboot_start, reserved.multiboot_end);
+    printf("kernel_start = 0x%X, kernel_end = 0x%X\n", reserved.kernel_start, reserved.kernel_end);
 
     isr_init();
     irq_init();
@@ -36,23 +42,10 @@ void kmain(unsigned long magic, unsigned long addr) {
     keyboard_init();
     printf("Keyboard driver enabled.\n");
 
-    // TODO: This is needed to compute values after
-    dump_multiboot_info(addr);
-
-    printf("%d\n", addr);
-
-    uint64_t mb_start = get_multiboot_start();
-    uint64_t mb_end = get_multiboot_end();
-    uint64_t k_start = get_kernel_start();
-    uint64_t k_end = get_kernel_end();
-
-    printf("multiboot_start = 0x%X, multiboot_end = 0x%X\n", mb_start, mb_end);
-    printf("kernel_start = 0x%X, kernel_end = 0x%X\n", k_start, k_end);
-
     // Memory
-    multiboot_tag_mmap_t* mmap = find_multiboot_tag(addr, MULTIBOOT_TAG_TYPE_MMAP);
+    multiboot_tag_mmap_t* mmap = find_multiboot_tag(mbi->tags, MULTIBOOT_TAG_TYPE_MMAP);
 
-    mmap_init(mmap, k_start, k_end, addr, (addr + *(unsigned*)addr));
+    mmap_init(mmap, reserved);
     paging_init();
     printf("Frame allocator and paging enabled.\n");
 
