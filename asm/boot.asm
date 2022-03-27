@@ -92,6 +92,11 @@ check_long_mode:
     jmp error
 
 set_up_page_tables:
+    ; Required to implement recursive mapping (paging)
+    mov eax, p4_table
+    or eax, 0b11                        ; present + writable
+    mov [p4_table + 511 * 8], eax
+
     mov eax, p3_table
     or eax, 0b11
     mov dword [p4_table + 0], eax

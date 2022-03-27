@@ -2,13 +2,12 @@
 #include <core/timer.h>
 #include <core/debug.h>
 #include <mmu/mmap.h>
+#include <mmu/paging.h>
 #include <drivers/screen.h>
 #include <drivers/serial.h>
 #include <drivers/keyboard.h>
 #include <stdio.h>
 #include "kmain.h"
-
-#define CHECK_FLAG(flags, bit) ((flags) & (1 << (bit)))
 
 void kmain(unsigned long magic, unsigned long addr) {
     screen_init();
@@ -45,7 +44,16 @@ void kmain(unsigned long magic, unsigned long addr) {
 
     // Memory
     multiboot_tag_mmap_t* mmap = find_multiboot_tag(addr, MULTIBOOT_TAG_TYPE_MMAP);
+
     mmap_init(mmap, k_start, k_end, addr, (addr + *(unsigned *)addr));
+    paging_init();
+
+    physical_address_t a = 42 * 512 * 512 * 4096;
+    page_t page = containing_address(a);
+
+    DEBUG("containing_address = 0x%X", page);
+    DEBUG("translate_page = 0x%X", translate_page(page));
+    map_page_to_frame(page, translate_page(page), 0U);
 
     while (1) {
         __asm__("hlt");
