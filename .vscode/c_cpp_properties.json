@@ -12,7 +12,7 @@
 
             ],
             "compilerPath": "${workspaceFolder}/toolchain/x86_64/bin/x86_64-elf-gcc",
-            "cStandard": "c99",
+            "cStandard": "c11",
             "cppStandard": "c++14",
             "intelliSenseMode": "gcc-x64"
         }
