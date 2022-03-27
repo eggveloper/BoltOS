@@ -14,7 +14,7 @@ static void keyboard_callback(uint64_t stack) {
         return;
     }
 
-    printf("Recieved: %d\n", scancode);
+    printf("Recieved scancode: %d\n", scancode);
 
     UNUSED(stack);
 }
