@@ -36,8 +36,7 @@ void kmain(unsigned long magic, unsigned long addr) {
     printf("Scheduler (timer) enabled.\n");
 
     serial_init(SERIAL_COM1, SERIAL_SPEED_115200);
-
-    DEBUG("%s has started!", KERNEL_NAME);
+    printf("Initialized serial 0x%X.\n", SERIAL_COM1);
 
     keyboard_init();
     printf("Keyboard driver enabled.\n");
