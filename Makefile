@@ -32,8 +32,8 @@ kernel: $(KERNEL)
 .PHONY: kernel
 
 $(KERNEL): $(OBJECTS) $(LIB)
-	mkdir -p $(KERNEL_DIR)
-	$(LD) --nmagic --output=$@ --script=$(LINKER) $(OBJECTS) $(LIB)
+	@mkdir -p $(KERNEL_DIR)
+	@$(LD) --nmagic --output=$@ --script=$(LINKER) $(OBJECTS) $(LIB)
 	@echo "[LD] $@"
 
 $(OBJECTS): %.o: %.asm

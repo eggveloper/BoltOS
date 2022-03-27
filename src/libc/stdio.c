@@ -18,6 +18,7 @@ void printf(const char* format, ...) {
 void vprintf(int device, const char* format, va_list arg) {
     int32_t i_val;
     uint32_t u_val;
+    uint64_t l_val;
     char s_val[20];
 
     for (int i = 0; i < strlen(format); i++) {
@@ -30,14 +31,6 @@ void vprintf(int device, const char* format, va_list arg) {
 
                     break;
 
-                case 'u':
-                    u_val = va_arg(arg, uint32_t);
-
-                    itoa(u_val, s_val, 10);
-                    puts(device, s_val);
-
-                    break;
-
                 case 'd':
                     i_val = va_arg(arg, int32_t);
 
@@ -46,16 +39,26 @@ void vprintf(int device, const char* format, va_list arg) {
 
                     break;
 
+                case 'u':
                 case 'x':
-                    i_val = va_arg(arg, uint32_t);
+                    u_val = va_arg(arg, uint32_t);
 
-                    itoa(i_val, s_val, 16);
+                    itoa(u_val, s_val, format[i + 1] == 'x' ? 16 : 10);
+                    puts(device, s_val);
+
+                    break;
+
+                case 'L':
+                case 'X':
+                    l_val = va_arg(arg, uint64_t);
+
+                    ulltoa(l_val, s_val, format[i + 1] == 'X' ? 16 : 10);
                     puts(device, s_val);
 
                     break;
 
                 case 's':
-                    puts(device, va_arg(arg, char *));
+                    puts(device, va_arg(arg, char*));
 
                     break;
             }
