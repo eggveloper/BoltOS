@@ -4,6 +4,7 @@
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdbool.h>
+#include <stddef.h>
 
 bool serial_received(uint16_t com);
 bool serial_is_transmit_fifo_empty(uint16_t com);
@@ -28,7 +29,7 @@ void serial_init(uint16_t com, uint16_t divisor) {
 }
 
 void serial_print(uint16_t com, const char* str) {
-    for (int i = 0; i < strlen(str); i++) {
+    for (size_t i = 0; i < strlen(str); i++) {
         serial_write(com, str[i]);
     }
 }

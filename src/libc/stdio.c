@@ -22,7 +22,7 @@ void vprintf(int device, const char* format, va_list arg) {
     uint64_t l_val;
     char s_val[20];
 
-    for (int i = 0; i < strlen(format); i++) {
+    for (size_t i = 0; i < strlen(format); i++) {
         char c = format[i];
 
         if (c == '%') {
@@ -50,7 +50,7 @@ void vprintf(int device, const char* format, va_list arg) {
 
                     itoa(i_val, s_val, 10);
 
-                    while ((leftpad - strlen(s_val)) > 0) {
+                    while ((leftpad - (uint8_t) strlen(s_val)) > 0) {
                         putchar(device, '0');
 
                         leftpad--;

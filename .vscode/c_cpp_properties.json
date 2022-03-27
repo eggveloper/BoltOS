@@ -4,14 +4,16 @@
             "name": "GCC",
             "includePath": [
                 "${workspaceFolder}/**",
-                "${workspaceFolder}/src",
                 "${workspaceFolder}/src/include",
-                "${workspaceFolder}/toolchain/x86_64/lib/gcc/x86_64-elf/7.1.0/include"
+                "${workspaceFolder}/toolchain/x86_64/lib/gcc/x86_64-elf/7.1.0/include/**"
             ],
             "defines": [
-
             ],
             "compilerPath": "${workspaceFolder}/toolchain/x86_64/bin/x86_64-elf-gcc",
+            "compilerArgs": [
+                "-W", "-Wall", "-pedantic", "-std=c11", "-O2", "-ffreestanding", "-nostdlib",
+                "-mno-red-zone", "-Isrc/include/", "-Isrc/", "-fno-builtin", "-fno-stack-protector"
+            ],
             "cStandard": "c11",
             "cppStandard": "c++14",
             "intelliSenseMode": "gcc-x64"
