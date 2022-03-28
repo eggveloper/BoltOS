@@ -9,4 +9,6 @@
 
 #define PANIC(...) __PANIC(__VA_ARGS__, "")
 
+void kernel_panic(const char* format, ...);
+
 #endif

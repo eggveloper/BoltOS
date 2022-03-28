@@ -1,7 +1,13 @@
 #include "isr.h"
 #include <core/ports.h>
 #include <kernel/panic.h>
+#include <stdio.h>
 #include <stdlib.h>
+
+#define NB_REGISTERS_PUSHED_BEFORE_CALL 15
+
+stack_t* get_stack(uint64_t id, uint64_t stack);
+void breakpoint_handler(stack_t* stack);
 
 isr_t interrupt_handlers[256];
 
@@ -103,6 +109,8 @@ void isr_init() {
     set_idt_gate(IRQ3, (uint64_t)irq3);
     set_idt_gate(IRQ4, (uint64_t)irq4);
 
+    register_interrupt_handler(EXCEPTION_BP, breakpoint_handler);
+
     set_idt();
 }
 
@@ -114,12 +122,34 @@ void irq_disable() {
     __asm__("cli");
 }
 
-void isr_handler(uint64_t id, uint64_t stack) {
-    UNUSED(stack);
-    PANIC("Interrupt: %s (%d)\n", exception_messages[id], id);
+void isr_handler(uint64_t id, uint64_t stack_addr) {
+    stack_t* stack = get_stack(id, stack_addr);
+
+    if (interrupt_handlers[id] != 0) {
+        isr_t handler = interrupt_handlers[id];
+
+        handler(get_stack(id, stack_addr));
+
+        return;
+    }
+
+    PANIC(
+        "Interrupt: %d (%s)\n\n"
+        "  instruction_pointer = 0x%X\n"
+        "  code_segment        = 0x%X\n"
+        "  cpu_flags           = 0x%X\n"
+        "  stack_pointer       = 0x%X\n"
+        "  stack_segment       = 0x%X",
+        id, exception_messages[id],
+        stack->instruction_pointer,
+        stack->code_segment,
+        stack->cpu_flags,
+        stack->stack_pointer,
+        stack->stack_segment
+    );
 }
 
-void irq_handler(uint64_t id, uint64_t stack) {
+void irq_handler(uint64_t id, uint64_t stack_addr) {
     if (id >= 40) {
         port_byte_out(PIC2, PIC_EOI);
     }
@@ -129,10 +159,43 @@ void irq_handler(uint64_t id, uint64_t stack) {
     if (interrupt_handlers[id] != 0) {
         isr_t handler = interrupt_handlers[id];
 
-        handler(stack);
+        handler(get_stack(id, stack_addr));
     }
 }
 
 void register_interrupt_handler(uint64_t id, isr_t handler) {
     interrupt_handlers[id] = handler;
+}
+
+stack_t* get_stack(uint64_t id, uint64_t stack_addr) {
+    switch (id) {
+    case 8:
+    case 10:
+    case 11:
+    case 12:
+    case 13:
+    case 14:
+    case 17:
+        stack_addr += sizeof(uint64_t);
+
+        break;
+    }
+
+    return (stack_t*)(stack_addr + (NB_REGISTERS_PUSHED_BEFORE_CALL * sizeof(uint64_t)));
+}
+
+void breakpoint_handler(stack_t* stack) {
+    printf(
+        "Exception: BREAKPOINT\n"
+        "  instruction_pointer = 0x%X\n"
+        "  code_segment        = 0x%X\n"
+        "  cpu_flags           = 0x%X\n"
+        "  stack_pointer       = 0x%X\n"
+        "  stack_segment       = 0x%X\n",
+        stack->instruction_pointer,
+        stack->code_segment,
+        stack->cpu_flags,
+        stack->stack_pointer,
+        stack->stack_segment
+    );
 }

@@ -31,6 +31,9 @@ void screen_clear() {
             screen_write_at(' ', screen_scheme, x, y);
         }
     }
+
+    screen_col = 0;
+    screen_row = 0;
 }
 
 void screen_print(const char* str) {
@@ -53,8 +56,8 @@ void screen_write_at(char c, uint8_t scheme, int x, int y) {
     if (offset > SCREEN_HEIGHT * SCREEN_WIDTH * 2) {
         for (int i = 1; i < SCREEN_HEIGHT; i++) {
             memcpy(
-                ((char *)VIDEO_ADDRESS + (2 * i * SCREEN_WIDTH)),
-                ((char *)VIDEO_ADDRESS + (2 * (i - 1) * SCREEN_WIDTH)),
+                ((char*)VIDEO_ADDRESS + (2 * i * SCREEN_WIDTH)),
+                ((char*)VIDEO_ADDRESS + (2 * (i - 1) * SCREEN_WIDTH)),
                 2 * SCREEN_WIDTH
             );
         }

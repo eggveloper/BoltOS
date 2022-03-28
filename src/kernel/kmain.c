@@ -3,13 +3,13 @@
 #include <core/timer.h>
 #include <core/debug.h>
 #include <core/check.h>
-#include <core/cmos.h>
 #include <mmu/mmu.h>
 #include <kernel/panic.h>
 #include <drivers/screen.h>
 #include <drivers/serial.h>
 #include <drivers/keyboard.h>
 #include <stdio.h>
+#include <shell/shell.h>
 
 void print_welcome_message() {
     printf("%s\n", KERNEL_ASCII);
@@ -32,8 +32,10 @@ void kmain(unsigned long magic, unsigned long addr) {
     print_welcome_message();
 
 #ifdef ENABLE_KERNEL_DEBUG
-    printf("multiboot_start = 0x%X, multiboot_end = 0x%X\n", reserved.multiboot_start, reserved.multiboot_end);
-    printf("kernel_start    = 0x%X, kernel_end    = 0x%X\n", reserved.kernel_start, reserved.kernel_end);
+    printf("multiboot_start = 0x%X, multiboot_end = 0x%X\n", reserved.multiboot_start,
+           reserved.multiboot_end);
+    printf("kernel_start    = 0x%X, kernel_end    = 0x%X\n", reserved.kernel_start,
+           reserved.kernel_end);
 #endif
 
     isr_init();
@@ -59,16 +61,9 @@ void kmain(unsigned long magic, unsigned long addr) {
     paging_init();
     printf("Frame allocator and paging enabled.\n");
 
-    cmos_rtc_t rtc = cmos_read_rtc();
-    printf(
-        "\nToday is %2d/%2d/%2d %2d:%2d:%2d UTC\n",
-        rtc.year, rtc.month, rtc.day,
-        rtc.hours, rtc.minutes, rtc.seconds
-    );
-
-    printf("$ ");
+    printf(PROMPT);
 
     while (1) {
-        __asm__("hlt");
+        shell(keyboard_get_last_scancode());
     }
 }

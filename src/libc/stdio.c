@@ -7,7 +7,7 @@
 #include <drivers/serial.h>
 
 void putchar(int device, char c);
-void puts(int device, char *s);
+void puts(int device, char* s);
 
 void printf(const char* format, ...) {
     va_list arg;
@@ -35,53 +35,53 @@ void vprintf(int device, const char* format, va_list arg) {
             }
 
             switch (format[i + 1]) {
-                case '%':
-                    putchar(device, '%');
+            case '%':
+                putchar(device, '%');
 
-                    break;
+                break;
 
-                case 'c':
-                    putchar(device, va_arg(arg, int));
+            case 'c':
+                putchar(device, va_arg(arg, int));
 
-                    break;
+                break;
 
-                case 'd':
-                    i_val = va_arg(arg, int32_t);
+            case 'd':
+                i_val = va_arg(arg, int32_t);
 
-                    itoa(i_val, s_val, 10);
+                itoa(i_val, s_val, 10);
 
-                    while ((leftpad - (uint8_t) strlen(s_val)) > 0) {
-                        putchar(device, '0');
+                while ((leftpad - (uint8_t) strlen(s_val)) > 0) {
+                    putchar(device, '0');
 
-                        leftpad--;
-                    }
+                    leftpad--;
+                }
 
-                    puts(device, s_val);
+                puts(device, s_val);
 
-                    break;
+                break;
 
-                case 'u':
-                case 'x':
-                    u_val = va_arg(arg, uint32_t);
+            case 'u':
+            case 'x':
+                u_val = va_arg(arg, uint32_t);
 
-                    itoa(u_val, s_val, format[i + 1] == 'x' ? 16 : 10);
-                    puts(device, s_val);
+                itoa(u_val, s_val, format[i + 1] == 'x' ? 16 : 10);
+                puts(device, s_val);
 
-                    break;
+                break;
 
-                case 'L':
-                case 'X':
-                    l_val = va_arg(arg, uint64_t);
+            case 'L':
+            case 'X':
+                l_val = va_arg(arg, uint64_t);
 
-                    ulltoa(l_val, s_val, format[i + 1] == 'X' ? 16 : 10);
-                    puts(device, s_val);
+                ulltoa(l_val, s_val, format[i + 1] == 'X' ? 16 : 10);
+                puts(device, s_val);
 
-                    break;
+                break;
 
-                case 's':
-                    puts(device, va_arg(arg, char*));
+            case 's':
+                puts(device, va_arg(arg, char*));
 
-                    break;
+                break;
             }
 
             i++;

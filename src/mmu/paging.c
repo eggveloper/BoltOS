@@ -23,11 +23,12 @@ physical_address_t translate(virtual_address_t addr) {
     page_t virt = page_containing_address(addr);
     uint64_t offset = virt % PAGE_SIZE;
 
-    return (physical_address_t) (page_starting_address((uint64_t) translate_page(virt)) + offset);
+    return (physical_address_t)(page_starting_address((uint64_t) translate_page(virt)) + offset);
 }
 
 frame_t translate_page(page_t page) {
     page_table_t p3 = next_table_address((page_table_t)P4_TABLE, p4_index(page));
+
     if (!p3) {
         return 0;
     }
@@ -35,11 +36,13 @@ frame_t translate_page(page_t page) {
     // TODO: huge page
 
     page_table_t p2 = next_table_address(p3, p3_index(page));
+
     if (!p2) {
         return 0;
     }
 
     page_table_t p1 = next_table_address(p2, p2_index(page));
+
     if (!p1) {
         return 0;
     }
@@ -96,7 +99,7 @@ void unmap(page_t page) {
 
     mmap_deallocate_frame(pointed_frame(entry));
 
-    __asm__("invlpg (%0)" ::"r" (page_starting_address(page)) : "memory");
+    __asm__("invlpg (%0)" ::"r"(page_starting_address(page)) : "memory");
 }
 
 void set_addr_mask(page_entry_t* entry, uint64_t addr) {
@@ -163,7 +166,7 @@ page_table_t next_table_address(page_table_t table, uint32_t index) {
     if (table[index].present && !table[index].huge_page) {
         uint64_t table_address = (uint64_t) table;
 
-        return (page_table_t) ((table_address << 9) | (index << 12));
+        return (page_table_t)((table_address << 9) | (index << 12));
     }
 
     return 0;

@@ -6,6 +6,7 @@ void check_interrupts() {
     printf("Checking interrupts.. ");
 
     uint32_t tick = timer_tick();
+
     while (tick == timer_tick()) ;
 
     printf("OK\n");

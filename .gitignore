@@ -4,3 +4,4 @@
 *.a
 /toolchain/
 /.vscode/settings.json
+*.orig
